@@ -42,7 +42,7 @@ export default function Navbar() {
 
   return (
     <>
-      <style jsx>{`
+      <style>{`
         .navbar {
           position: fixed;
           top: 18px;
@@ -91,6 +91,7 @@ export default function Navbar() {
   align-items: center;
   justify-content: center;
   transition: 0.35s ease;
+  margin-top:6px;
 }
 
         .brand:hover .logo-wrapper {

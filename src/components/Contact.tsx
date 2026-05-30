@@ -23,8 +23,8 @@ const socials = [
   {
     id: 1,
     label: "Write To Us",
-    value: "meanttobe.orginals@gmail.com",
-    href: "mailto:meanttobe.orginals@gmail.com",
+    value: "meanttobe.originals@gmail.com",
+    href: "mailto:meanttobe.originals@gmail.com",
     subtext: "Typically replies within 24 hours",
     svgIcon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -37,7 +37,7 @@ const socials = [
     id: 2,
     label: "Follow Us",
     value: "@meant.to.be_originals",
-    href: "https://www.instagram.com/meanttobe.originals?igsh=czd0c3RmeW1hZGNx",
+    href: "https://www.instagram.com/meanttobe.originals?igsh=MWF0azJ1bmpzazMxcw%3D%3D&utm_source=qr",
     subtext: "Explore curations & customer reviews",
     svgIcon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
