@@ -749,7 +749,7 @@ export default function Shop() {
           .modal-box {
             grid-template-columns: 1fr;
             max-height: 95vh;
-            overflow-y: auto;
+            overflow: hidden;
           }
           .modal-img-side {
             height: 280px;
@@ -789,15 +789,23 @@ export default function Shop() {
         }
 
         /* Modal Right Content Panel */
-        .modal-content-side {
-          padding: 3rem 2.2rem 2.2rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          position: relative;
-          background: var(--cream-light);
-          overflow-y: auto;
-        }
+       .modal-content-side {
+  padding: 3rem 2.2rem 2.2rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: var(--cream-light);
+  overflow-y: auto;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  -webkit-overflow-scrolling: touch;
+}
+
+.modal-content-side::-webkit-scrollbar {
+  display: none;
+}
 
         .modal-close-btn {
           position: absolute;
@@ -845,14 +853,13 @@ export default function Shop() {
         }
 
         .modal-title {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 2.3rem;
-          font-weight: 400;
-          color: var(--charcoal);
-          line-height: 1.15;
-          margin: 0.6rem 0 0;
-          letter-spacing: -0.015em;
-        }
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  margin: 0.8rem 0 1rem;
+  line-height: 1.1;
+}
 
         .modal-desc {
           font-size: 13.5px;
@@ -865,10 +872,11 @@ export default function Shop() {
 
         /* Modal Image Navigation Indicators (Pill Carousel) */
         .modal-thumbnails {
-          display: flex;
-          gap: 8px;
-          margin-top: 1.2rem;
-        }
+  display: flex;
+  gap: 8px;
+  margin: 1rem 0 1.5rem;
+  flex-wrap: wrap;
+}
         .modal-thumb {
           width: 50px;
           height: 50px;
