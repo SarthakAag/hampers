@@ -16,20 +16,51 @@ const hampers = [
     accent: "#C82525",
     isComingSoon: false,
     buyUrl: "https://payments.cashfree.com/forms/MTBO", // Redirect link for payment/checkout
-    shortDescription: "Packed with warmth, sips & little joys.",
-    fullDescription: `A basket full of cozy sips, tasty bites & coffee-filled happiness!\n\nIncludes:\n• Premium coffee beans\n• Dark chocolate-chip cookies\n• Gourmet chocolate bites\n• Ceramic artisan mug\n• Golden stirring spoon\n\nPerfect for coffee lovers, gifting & cozy evenings.\nLimited stock available!`,
+    shortDescription:
+  "Packed with warmth, sip and little joys for all your cozy coffee moments.",
+    fullDescription: `A basket full of cozy sips, tasty bites & coffee-filled happiness!
+
+Thoughtfully packed with 8 handpicked goodies in a neatly woven basket, wrapped with net detailing and tied with a cute ribbon.
+
+Perfect for coffee lovers, gifting, coffee dates, picnics & warm little get-togethers.
+
+Price - ₹999 + Shipping
+
+Limited stock only!`,
   },
-  {
-    id: 2,
-    title: "Pet Lovers Hamper",
-    price: "₹1,999",
-    tag: "Coming Soon",
-    accent: "#C82525",
-    isComingSoon: true,
-    buyUrl: "#",
-    shortDescription: "Luxury gifts curated for furry friends.",
-    fullDescription: `A premium pet hamper thoughtfully curated for pet lovers.\n\nIncludes:\n• Organic pet treats\n• Premium toys\n• Grooming essentials\n• Stylish pet accessories\n• Personalized goodies\n\nPerfect for birthdays & gifting.\nExclusive launch coming soon!`,
-  },
+{
+  id: 2,
+  title: "Tiny Treasure Collection",
+  price: "₹999 + Shipping",
+  images: [
+    "/tiny1.png",
+    "/tiny2.png",
+    "/tiny3.png",
+    "/tiny4.png",
+    "/tiny5.png",
+  ],
+  tag: "Trending",
+  accent: "#C82525",
+  isComingSoon: false,
+  buyUrl: "#",
+  shortDescription:
+    "Filled with little joys, meaningful keepsakes & aesthetic surprises.",
+
+  fullDescription: `Tiny Treasures is a curated hamper collection filled with little joys, meaningful keepsakes, and aesthetic surprises.
+
+Thoughtfully packed with love, each box is designed to make gifting feel warm, memorable, and special. ✨
+
+Perfect for birthdays, celebrations, thank-you gifts, and creating beautiful memories.
+
+Includes:
+• Handpicked keepsakes
+• Aesthetic surprises
+• Premium packaging
+• Thoughtful gift elements
+• Elegant presentation
+
+Made to make every gift feel extra special.`,
+},
 ];
 
 const features = ["Handmade", "Premium Quality", "Luxury Packaging"];
@@ -199,10 +230,9 @@ export default function Shop() {
           color: var(--red-primary);
         }
 
-      .shop-section {
+  .shop-section {
   position: relative;
-  padding: 6rem 2rem 6rem;
-  /* removed min-height: 100vh — was forcing full viewport height */
+  padding: 4rem 1rem;
   max-width: 1200px;
   margin: 0 auto;
   z-index: 1;
@@ -284,12 +314,12 @@ export default function Shop() {
         }
 
         /* Staggered Grid Cards */
-        .shop-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-          gap: 36px;
-          margin-top: 3.5rem;
-        }
+       .shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 3rem;
+}
 
         /* Premium Card styling */
         .hamper-card {
@@ -347,12 +377,12 @@ export default function Shop() {
         }
 
         /* Image Carousel Container */
-        .hamper-card-img-wrap {
-          position: relative;
-          overflow: hidden;
-          height: 300px;
-          background: #eae3db;
-        }
+      .hamper-card-img-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  background: #eae3db;
+}
         
         /* High-fashion Coming Soon Placeholder - NO IMAGE */
         .coming-soon-placeholder {
@@ -548,7 +578,7 @@ export default function Shop() {
 
         /* Card Body details */
         .hamper-card-body {
-          padding: 1.7rem 1.8rem 1.8rem;
+          padding: 1.2rem 1.4rem;
           background: var(--white);
           position: relative;
         }

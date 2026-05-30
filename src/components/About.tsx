@@ -164,11 +164,8 @@ export default function About() {
           box-shadow: 0 20px 48px rgba(200, 37, 37, 0.07);
           position: relative;
           z-index: 2;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 2rem;
+          overflow: hidden;
+          padding: 0;
           transform: rotate(-3deg);
           transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
@@ -185,43 +182,25 @@ export default function About() {
           inset: 12px;
           border: 1px solid rgba(212, 175, 55, 0.3);
           border-radius: 20px;
+          z-index: 2;
+          pointer-events: none;
         }
 
-        .visual-monogram {
-          font-size: 3.5rem;
-          color: var(--gold-accent);
-          margin-bottom: 1rem;
-          animation: floatEmblem 4s infinite ease-in-out;
+        .visual-card img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          border-radius: 28px;
+          transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .visual-title {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 1.8rem;
-          font-style: italic;
-          color: var(--charcoal);
-          margin-bottom: 0.5rem;
-        }
-
-        .visual-divider {
-          width: 50px;
-          height: 1px;
-          background: var(--gold-accent);
-          margin: 1rem 0;
-        }
-
-        .visual-text {
-          font-size: 11px;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: var(--text-muted);
+        .visual-card:hover img {
+          transform: scale(1.05);
         }
 
         @keyframes spinRound {
           to { transform: rotate(360deg); }
-        }
-        @keyframes floatEmblem {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-8px); }
         }
 
         .about-content {
@@ -278,14 +257,8 @@ export default function About() {
           font-weight: 400;
           transition: opacity 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        .word-span.fade-in {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        .word-span.fade-out {
-          opacity: 0;
-          transform: translateY(-8px);
-        }
+        .word-span.fade-in  { opacity: 1; transform: translateY(0); }
+        .word-span.fade-out { opacity: 0; transform: translateY(-8px); }
 
         .about-editorial {
           font-family: 'Cormorant Garamond', serif;
@@ -331,7 +304,6 @@ export default function About() {
           box-shadow: 0 10px 24px rgba(200, 37, 37, 0.04);
         }
 
-        /* Icon badge replaces emoji — uses a red initial letter */
         .value-icon {
           flex-shrink: 0;
           width: 42px;
@@ -357,14 +329,9 @@ export default function About() {
           transform: scale(1.1) rotate(-4deg);
           background: var(--red-primary);
         }
-        .value-card:hover .value-icon svg {
-          stroke: #fff;
-        }
+        .value-card:hover .value-icon svg { stroke: #fff; }
 
-        .value-info {
-          display: flex;
-          flex-direction: column;
-        }
+        .value-info { display: flex; flex-direction: column; }
 
         .value-title {
           font-size: 14.5px;
@@ -383,7 +350,7 @@ export default function About() {
 
         @keyframes contactFadeInUp {
           from { opacity: 0; transform: translateY(24px); }
-          to { opacity: 1; transform: translateY(0); }
+          to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
 
@@ -400,10 +367,9 @@ export default function About() {
               <div className="visual-circle-bg" />
               <div className="visual-circle-glow" />
               <div className="visual-card">
-                
-               
-                <div className="visual-divider" />
-               
+                {/* ── Drop your image as /public/about.png ── */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/about.png" alt="About our hampers" />
               </div>
             </div>
 
@@ -433,7 +399,6 @@ export default function About() {
               <div className="about-values-list">
                 {coreValues.map((val, i) => (
                   <div key={val.id} className="value-card">
-                    {/* SVG icons replace emojis */}
                     <div className="value-icon">
                       {i === 0 && (
                         <svg viewBox="0 0 24 24">
@@ -459,8 +424,8 @@ export default function About() {
                   </div>
                 ))}
               </div>
-
             </div>
+
           </div>
         </div>
       </div>

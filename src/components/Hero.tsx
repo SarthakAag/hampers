@@ -3,16 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 
 const videos = [
-  {
-    src: "/video1.mp4",
-    title: "Wedding Hampers",
-    subtitle: "Elegant luxury gifting",
-  },
-  {
-    src: "/video2.mp4",
-    title: "Coffee Hampers",
-    subtitle: "Premium coffee experiences",
-  },
+  { src: "/video1.mp4" },
+  { src: "/video2.mp4" },
+  { src: "/video3.mp4" },
 ];
 
 export default function Hero() {
@@ -20,17 +13,16 @@ export default function Hero() {
   const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Prevent any SSR/hydration flash
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Auto-scroll every 5 seconds
   useEffect(() => {
     if (!mounted) return;
 
     const interval = setInterval(() => {
       const nextIndex = (currentVideo + 1) % videos.length;
-      setCurrentVideo(nextIndex);
 
       if (containerRef.current) {
         containerRef.current.scrollTo({
@@ -38,15 +30,37 @@ export default function Hero() {
           behavior: "smooth",
         });
       }
+
+      setCurrentVideo(nextIndex);
     }, 5000);
 
     return () => clearInterval(interval);
   }, [currentVideo, mounted]);
 
+  // Update active indicator while user scrolls
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const index = Math.round(container.scrollTop / 620);
+      setCurrentVideo(index);
+    };
+
+    container.addEventListener("scroll", handleScroll);
+
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   const scrollToShop = () => {
     const section = document.getElementById("shop");
+
     if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
+      section.scrollIntoView({
+        behavior: "smooth",
+      });
     }
   };
 
@@ -57,13 +71,12 @@ export default function Hero() {
       id="home"
       className="relative min-h-screen w-full overflow-hidden bg-[#fffaf2] pt-28"
     >
-      {/* Background Design */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+      {/* Background Blur */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-150px] left-[-120px] w-[420px] h-[420px] bg-red-200/30 rounded-full blur-3xl" />
         <div className="absolute bottom-[-150px] right-[-120px] w-[420px] h-[420px] bg-orange-100/40 rounded-full blur-3xl" />
       </div>
 
-      {/* Main Content */}
       <div className="relative z-10 min-h-screen flex items-center px-6 sm:px-10 lg:px-20 py-20">
         <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 items-center">
 
@@ -82,12 +95,10 @@ export default function Hero() {
 
             <p className="mt-8 text-gray-600 text-base sm:text-lg md:text-xl leading-8 max-w-2xl">
               Curated luxury hampers for weddings,
-              birthdays, festive occasions, and
-              memorable celebrations crafted with
-              elegance and care.
+              birthdays, festive occasions, and memorable
+              celebrations crafted with elegance and care.
             </p>
 
-            {/* Single Shop Now Button */}
             <div className="mt-10 flex justify-center lg:justify-start">
               <button
                 onClick={scrollToShop}
@@ -103,21 +114,24 @@ export default function Hero() {
           <div className="flex justify-center lg:justify-end">
             <div className="relative">
 
-              {/* Glow */}
+              {/* Glow Effect */}
               <div className="absolute inset-0 bg-red-300/20 blur-3xl rounded-full pointer-events-none" />
 
-              {/* Video Container */}
+              {/* Reel Container */}
               <div
                 ref={containerRef}
-                className="relative w-[320px] sm:w-[360px] h-[620px] overflow-hidden rounded-[2.5rem] border border-red-100 shadow-2xl bg-black"
-                style={{ scrollSnapType: "none" }}
+                className="relative w-[320px] sm:w-[360px] h-[620px] overflow-y-auto rounded-[2.5rem] border border-red-100 shadow-2xl bg-black scrollbar-hide"
+                style={{
+                  scrollSnapType: "y mandatory",
+                  WebkitOverflowScrolling: "touch",
+                  scrollbarWidth: "none",
+                }}
               >
-                {/* Videos stacked vertically, scrolled programmatically */}
                 <div className="flex flex-col">
                   {videos.map((video, index) => (
                     <div
                       key={index}
-                      className="relative w-full h-[620px] flex-shrink-0"
+                      className="relative w-full h-[620px] flex-shrink-0 snap-start"
                     >
                       <video
                         autoPlay
@@ -130,23 +144,12 @@ export default function Hero() {
                         <source src={video.src} type="video/mp4" />
                       </video>
 
-                      {/* Gradient Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none" />
-
-                      {/* Video Text */}
-                      <div className="absolute bottom-8 left-6">
-                        <h3 className="text-white text-3xl font-bold">
-                          {video.title}
-                        </h3>
-                        <p className="text-gray-200 mt-2 text-sm">
-                          {video.subtitle}
-                        </p>
-                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
                     </div>
                   ))}
                 </div>
 
-                {/* Floating Badge */}
+                {/* Trending Badge */}
                 <div className="absolute top-5 right-5 bg-white/80 backdrop-blur-lg px-5 py-3 rounded-2xl shadow-lg">
                   <p className="text-red-700 text-sm font-semibold">
                     Trending
@@ -158,16 +161,17 @@ export default function Hero() {
                   {videos.map((_, index) => (
                     <div
                       key={index}
-                      className={`w-2.5 rounded-full transition-all duration-300 ${
+                      className={`rounded-full transition-all duration-300 ${
                         currentVideo === index
-                          ? "bg-red-700 h-8"
-                          : "bg-red-300 h-2.5"
+                          ? "bg-red-700 w-2.5 h-8"
+                          : "bg-red-300 w-2.5 h-2.5"
                       }`}
                     />
                   ))}
                 </div>
 
               </div>
+
             </div>
           </div>
 
