@@ -197,7 +197,7 @@ export default function Navbar() {
           align-items: center;
           justify-content: center;
           gap: 2rem;
-          z-index: 998;
+          z-index: 1001;
           opacity: 0;
           transition: opacity 0.35s ease;
           pointer-events: none;
@@ -224,9 +224,10 @@ export default function Navbar() {
         }
 
         .mobile-close {
-          position: absolute;
-          top: 24px;
-          right: 24px;
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 1002;
           width: 44px;
           height: 44px;
           border-radius: 50% !important;
