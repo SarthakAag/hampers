@@ -15,7 +15,7 @@ const hampers = [
     tag: "Trending",
     accent: "#C82525",
     isComingSoon: false,
-    buyUrl: "https://payments.cashfree.com/forms/MTBO", // Redirect link for payment/checkout
+    buyUrl: "https://payments.cashfree.com/forms/MTBO",
     shortDescription:
   "Packed with warmth, sip and little joys for all your cozy coffee moments.",
     fullDescription: `A basket full of cozy sips, tasty bites & coffee-filled happiness!
@@ -31,7 +31,7 @@ Limited stock only!`,
 {
   id: 2,
   title: "Tiny Treasure Collection",
-  price: "₹999 + Shipping",
+  price: "₹499 + Shipping",
   images: [
     "/tiny1.png",
     "/tiny2.png",
@@ -42,7 +42,7 @@ Limited stock only!`,
   tag: "Trending",
   accent: "#C82525",
   isComingSoon: false,
-  buyUrl: "#",
+  buyUrl: "https://payments.cashfree.com/forms/MTBT",
   shortDescription:
     "Filled with little joys, meaningful keepsakes & aesthetic surprises.",
 
@@ -69,20 +69,39 @@ export default function Shop() {
   const [selectedHamper, setSelectedHamper] = useState<null | typeof hampers[0]>(null);
   const [hoveredId, setHoveredId] = useState<null | number>(null);
   
-  // Track active image index for each card
   const [cardImageIndices, setCardImageIndices] = useState<Record<number, number>>({
     1: 0,
     2: 0,
     3: 0,
   });
 
-  // Track active image index in the detail modal
   const [modalImageIndex, setModalImageIndex] = useState<number>(0);
-
-  // Buy Now redirect transition state
   const [redirectingId, setRedirectingId] = useState<null | number>(null);
 
-  // Handle slide transitions on cards
+  // ── FIX 1: Reset loading state when user navigates back from Cashfree ──
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        setRedirectingId(null);
+      }
+    };
+
+    // Also reset on pageshow (fires when browser restores page from bfcache)
+    const handlePageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        setRedirectingId(null);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("pageshow", handlePageShow);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, []);
+
   const nextCardImage = (e: React.MouseEvent, hamperId: number, maxImages: number) => {
     e.stopPropagation();
     setCardImageIndices((prev) => ({
@@ -99,7 +118,6 @@ export default function Shop() {
     }));
   };
 
-  // Set card image index specifically
   const selectCardImageDot = (e: React.MouseEvent, hamperId: number, index: number) => {
     e.stopPropagation();
     setCardImageIndices((prev) => ({
@@ -108,7 +126,6 @@ export default function Shop() {
     }));
   };
 
-  // Buy Now trigger with elegant micro-animation and instant redirection
   const handleBuyNow = (e: React.MouseEvent, hamperId: number, url: string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -118,48 +135,57 @@ export default function Shop() {
     setRedirectingId(hamperId);
     
     setTimeout(() => {
-      window.location.href = url; // Redirect the user to the purchase/payment link
+      window.location.href = url;
     }, 850);
   };
 
-  // Synchronize modal image index with currently selected hamper index
   useEffect(() => {
     if (selectedHamper) {
       setModalImageIndex(0);
     }
   }, [selectedHamper]);
 
+  // ── FIX 2: Lock body scroll when modal is open, restore on close ──
+  useEffect(() => {
+    if (selectedHamper) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedHamper]);
+
   return (
     <>
-      {/* Google Fonts & CSS Style Declarations */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;700&display=swap');
 
-  .shop-root {
-  --cream-bg: #FCF8F4;
-  --cream-light: #FFFDFB;
-  --cream-border: rgba(200, 37, 37, 0.1);
-  --red-primary: #C82525;
-  --red-hover: #9E1A1A;
-  --red-light: #FFF1F1;
-  --gold-accent: #D4AF37;
-  --gold-light: #F6ECD0;
-  --white: #FFFFFF;
-  --charcoal: #2A1713;
-  --text-muted: #6B524E;
-  
-  --shadow-card: 0 4px 28px rgba(42, 23, 19, 0.04), 0 1px 4px rgba(42, 23, 19, 0.02);
-  --shadow-card-hover: 0 20px 48px rgba(200, 37, 37, 0.08), 0 6px 16px rgba(42, 23, 19, 0.04);
-  font-family: 'DM Sans', sans-serif;
-  background: var(--cream-bg);
-  color: var(--charcoal);
-  position: relative;
-  overflow: hidden; /* scoped — won't bleed into siblings */
-}
+        .shop-root {
+          --cream-bg: #FCF8F4;
+          --cream-light: #FFFDFB;
+          --cream-border: rgba(200, 37, 37, 0.1);
+          --red-primary: #C82525;
+          --red-hover: #9E1A1A;
+          --red-light: #FFF1F1;
+          --gold-accent: #D4AF37;
+          --gold-light: #F6ECD0;
+          --white: #FFFFFF;
+          --charcoal: #2A1713;
+          --text-muted: #6B524E;
+          
+          --shadow-card: 0 4px 28px rgba(42, 23, 19, 0.04), 0 1px 4px rgba(42, 23, 19, 0.02);
+          --shadow-card-hover: 0 20px 48px rgba(200, 37, 37, 0.08), 0 6px 16px rgba(42, 23, 19, 0.04);
+          font-family: 'DM Sans', sans-serif;
+          background: var(--cream-bg);
+          color: var(--charcoal);
+          position: relative;
+          overflow: hidden;
+        }
 
         .shop-root * { box-sizing: border-box; }
 
-        /* Floating Sparks & Background Orbs animations */
         .ambient-sparkle {
           position: absolute;
           border-radius: 50%;
@@ -201,42 +227,13 @@ export default function Shop() {
           z-index: 0;
         }
 
-        /* Brand Navigation Bar (Only Logo) */
-        .shop-nav {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 2.2rem 2rem;
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          z-index: 10;
+        .shop-section {
+          position: relative;
+          padding: 4rem 1rem;
           max-width: 1200px;
           margin: 0 auto;
+          z-index: 1;
         }
-
-        .shop-brand {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 1.8rem;
-          font-weight: 600;
-          color: var(--charcoal);
-          letter-spacing: 0.08em;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-        .shop-brand span {
-          color: var(--red-primary);
-        }
-
-  .shop-section {
-  position: relative;
-  padding: 4rem 1rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  z-index: 1;
-}
 
         .shop-header {
           text-align: center;
@@ -292,7 +289,6 @@ export default function Shop() {
           line-height: 1.8;
         }
 
-        /* Divider Decoration */
         .shop-divider {
           display: flex;
           align-items: center;
@@ -313,15 +309,13 @@ export default function Shop() {
           box-shadow: 0 0 8px rgba(200, 37, 37, 0.4);
         }
 
-        /* Staggered Grid Cards */
-       .shop-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-  margin-top: 3rem;
-}
+        .shop-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 24px;
+          margin-top: 3rem;
+        }
 
-        /* Premium Card styling */
         .hamper-card {
           background: var(--white);
           border-radius: 24px;
@@ -345,7 +339,6 @@ export default function Shop() {
           border-color: rgba(200, 37, 37, 0.25);
         }
 
-        /* Coming Soon State overlay elements */
         .hamper-card.coming-soon-card {
           border-color: rgba(212, 175, 55, 0.18);
         }
@@ -376,15 +369,14 @@ export default function Shop() {
           to { box-shadow: 0 4px 20px rgba(212, 175, 55, 0.35); border-color: var(--gold-accent); }
         }
 
-        /* Image Carousel Container */
-      .hamper-card-img-wrap {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 1 / 1;
-  background: #eae3db;
-}
+        .hamper-card-img-wrap {
+          position: relative;
+          overflow: hidden;
+          /* No forced aspect-ratio — frame fits the image's natural size */
+          background: #f5f0eb;
+          line-height: 0; /* collapse whitespace gap under img */
+        }
         
-        /* High-fashion Coming Soon Placeholder - NO IMAGE */
         .coming-soon-placeholder {
           width: 100%;
           height: 100%;
@@ -437,40 +429,45 @@ export default function Shop() {
         .carousel-track {
           position: relative;
           width: 100%;
-          height: 100%;
+          /* height driven by whichever slide is active */
         }
 
         .carousel-slide {
-          position: absolute;
-          inset: 0;
+          /* All slides occupy the same space; invisible ones are zero-height via grid trick */
+          display: grid;
+          grid-template-rows: 0fr;
           opacity: 0;
           transition: opacity 0.65s cubic-bezier(0.25, 0.8, 0.25, 1);
           pointer-events: none;
+          overflow: hidden;
+        }
+        .carousel-slide > * {
+          min-height: 0;
         }
         .carousel-slide.active {
+          grid-template-rows: 1fr;
           opacity: 1;
           pointer-events: auto;
+          overflow: visible;
         }
 
         .hamper-card-img {
           width: 100%;
-          height: 100%;
-          object-fit: cover;
+          height: auto;        /* natural proportions — no cropping */
+          display: block;
           transition: transform 1.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        /* Mode of high fashion image scale and slight micro-rotation */
         .hamper-card:hover .hamper-card-img {
           transform: scale(1.08) rotate(0.4deg);
         }
         .hamper-card-img-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, transparent 45%, rgba(42, 23, 19, 0.55) 100%);
+          background: linear-gradient(180deg, transparent 55%, rgba(42, 23, 19, 0.5) 100%);
           z-index: 1;
           pointer-events: none;
         }
 
-        /* Card Carousel Navigation Controls */
         .carousel-arrow {
           position: absolute;
           top: 50%;
@@ -514,7 +511,6 @@ export default function Shop() {
           transform: translateY(-50%) translateX(0);
         }
 
-        /* Carousel Tiny Dots Indicator */
         .carousel-dots {
           position: absolute;
           bottom: 16px;
@@ -543,7 +539,6 @@ export default function Shop() {
           border-radius: 100px;
         }
 
-        /* Floating Tags */
         .hamper-tag {
           position: absolute;
           top: 20px;
@@ -576,7 +571,6 @@ export default function Shop() {
           box-shadow: 0 4px 14px rgba(42, 23, 19, 0.08);
         }
 
-        /* Card Body details */
         .hamper-card-body {
           padding: 1.2rem 1.4rem;
           background: var(--white);
@@ -614,7 +608,6 @@ export default function Shop() {
           margin-top: 1.6rem;
         }
 
-        /* Luxurious Premium Buttons */
         .btn-primary {
           flex: 1.3;
           background: var(--charcoal);
@@ -635,7 +628,7 @@ export default function Shop() {
           gap: 6px;
           position: relative;
           overflow: hidden;
-          text-decoration: none; /* In case rendered as link anchor */
+          text-decoration: none;
         }
         .btn-primary:hover {
           background: var(--red-primary);
@@ -646,8 +639,6 @@ export default function Shop() {
         .btn-primary:active {
           transform: translateY(0);
         }
-        
-        /* Disabled primary button for upcoming items */
         .btn-primary:disabled {
           background: #EAE6E1;
           color: #A69F96;
@@ -684,7 +675,6 @@ export default function Shop() {
           color: var(--gold-accent);
         }
 
-        /* Sparking Loading Redirect Micro-animation */
         .loading-dots {
           display: inline-flex;
           gap: 4px;
@@ -703,7 +693,7 @@ export default function Shop() {
           to { opacity: 1; transform: scale(1.2); }
         }
 
-        /* ── LUXURY DETAILS MODAL ── */
+        /* ── MODAL ── */
         .modal-backdrop {
           position: fixed;
           inset: 0;
@@ -715,6 +705,7 @@ export default function Shop() {
           justify-content: center;
           padding: 1.5rem;
           animation: fadeInBackdrop 0.35s ease forwards;
+          overflow-y: auto;
         }
         @keyframes fadeInBackdrop {
           from { opacity: 0; }
@@ -727,13 +718,15 @@ export default function Shop() {
           border: 1px solid rgba(200, 37, 37, 0.15);
           width: 100%;
           max-width: 820px;
-          overflow: hidden;
           display: grid;
           grid-template-columns: 1.1fr 1fr;
+          /* stretch so left image column matches right content column height */
+          align-items: stretch;
           box-shadow: 0 32px 80px rgba(42, 23, 19, 0.24);
-          max-height: 90vh;
           animation: modalElastic 0.55s cubic-bezier(0.25, 1.1, 0.4, 1) forwards;
           position: relative;
+          /* no overflow clipping — let content grow naturally */
+          overflow: hidden;
         }
         
         .modal-box.modal-coming-soon {
@@ -745,67 +738,116 @@ export default function Shop() {
           to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
+        /* ── MOBILE MODAL (≤768px) — do not touch ── */
         @media (max-width: 768px) {
+          .modal-backdrop {
+            padding: 0;
+            align-items: flex-end;
+          }
           .modal-box {
             grid-template-columns: 1fr;
-            max-height: 95vh;
-            overflow: hidden;
+            border-radius: 24px 24px 0 0;
+            max-height: 92vh;
+            width: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
           }
           .modal-img-side {
-            height: 280px;
-            min-height: 280px !important;
+            position: relative;
+            overflow: hidden;
+            background: #f5f0eb;
+            flex-shrink: 0;
+          }
+          .modal-img-side img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+          }
+          .modal-img-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 60%, rgba(42, 23, 19, 0.65) 100%);
+          }
+          .modal-img-price {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            background: var(--white);
+            border: 1.5px solid var(--gold-accent);
+            border-radius: 100px;
+            padding: 8px 18px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--red-primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+          }
+          .modal-content-side {
+            overflow-y: visible;
+            max-height: none;
+            padding: 1.8rem 1.4rem 2.4rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: var(--cream-light);
           }
         }
 
-        /* Modal Left Image Panel */
-        .modal-img-side {
-          position: relative;
-          overflow: hidden;
-          min-height: 440px;
-          background: #f0eae1;
+        /* ── DESKTOP MODAL (≥769px) — image fills full height, no white gap ── */
+        @media (min-width: 769px) {
+          .modal-img-side {
+            position: relative;
+            overflow: hidden;
+            background: #f5f0eb;
+            /* grid stretch makes this column as tall as the content side */
+            align-self: stretch;
+            min-height: 0;
+          }
+          .modal-img-side img {
+            /* absolute fill so image covers the full stretched height */
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            object-position: center top;
+          }
+          .modal-img-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 60%, rgba(42, 23, 19, 0.65) 100%);
+          }
+          .modal-img-price {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            background: var(--white);
+            border: 1.5px solid var(--gold-accent);
+            border-radius: 100px;
+            padding: 8px 18px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--red-primary);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+          }
+          .modal-content-side {
+            padding: 3rem 2.2rem 2.2rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: var(--cream-light);
+            /* content side scrolls; image panel always stretches to match its height */
+            max-height: calc(100vh - 3rem);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(200, 37, 37, 0.15) transparent;
+          }
+          .modal-content-side::-webkit-scrollbar { width: 3px; }
+          .modal-content-side::-webkit-scrollbar-track { background: transparent; }
+          .modal-content-side::-webkit-scrollbar-thumb { background: rgba(200, 37, 37, 0.2); border-radius: 3px; }
         }
-        .modal-img-side img {
-          width: 100%; height: 100%;
-          object-fit: cover;
-          display: block;
-        }
-        .modal-img-overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(180deg, transparent 60%, rgba(42, 23, 19, 0.65) 100%);
-        }
-        .modal-img-price {
-          position: absolute;
-          bottom: 24px;
-          left: 24px;
-          background: var(--white);
-          border: 1.5px solid var(--gold-accent);
-          border-radius: 100px;
-          padding: 8px 18px;
-          font-size: 16px;
-          font-weight: 700;
-          color: var(--red-primary);
-          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        /* Modal Right Content Panel */
-       .modal-content-side {
-  padding: 3rem 2.2rem 2.2rem;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  background: var(--cream-light);
-  overflow-y: auto;
-
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-
-  -webkit-overflow-scrolling: touch;
-}
-
-.modal-content-side::-webkit-scrollbar {
-  display: none;
-}
 
         .modal-close-btn {
           position: absolute;
@@ -853,13 +895,13 @@ export default function Shop() {
         }
 
         .modal-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2.4rem;
-  font-weight: 600;
-  color: var(--charcoal);
-  margin: 0.8rem 0 1rem;
-  line-height: 1.1;
-}
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 2.4rem;
+          font-weight: 600;
+          color: var(--charcoal);
+          margin: 0.8rem 0 1rem;
+          line-height: 1.1;
+        }
 
         .modal-desc {
           font-size: 13.5px;
@@ -870,13 +912,12 @@ export default function Shop() {
           white-space: pre-line;
         }
 
-        /* Modal Image Navigation Indicators (Pill Carousel) */
         .modal-thumbnails {
-  display: flex;
-  gap: 8px;
-  margin: 1rem 0 1.5rem;
-  flex-wrap: wrap;
-}
+          display: flex;
+          gap: 8px;
+          margin: 1rem 0 1.5rem;
+          flex-wrap: wrap;
+        }
         .modal-thumb {
           width: 50px;
           height: 50px;
@@ -935,7 +976,6 @@ export default function Shop() {
           gap: 10px;
         }
 
-        /* Redirection Toast Notice */
         .toast-notification {
           position: fixed;
           bottom: 24px;
@@ -973,30 +1013,19 @@ export default function Shop() {
           font-size: 11px;
         }
 
-        /* Generic keyframe animation utility for elements sliding upwards on load */
         @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
 
       <div className="shop-root">
-        {/* Floating Sparks/Background graphics */}
         <div className="shop-bg-dots" aria-hidden="true" />
         <div className="ambient-sparkle ambient-sparkle-1" aria-hidden="true" />
         <div className="ambient-sparkle ambient-sparkle-2" aria-hidden="true" />
         <div className="ambient-sparkle ambient-sparkle-3" aria-hidden="true" />
 
-      
-
         <section className="shop-section" id="shop">
-          {/* Header Description panel */}
           <div className="shop-header">
             <div className="shop-eyebrow">The Signature Collection</div>
             <h1 className="shop-heading">
@@ -1016,7 +1045,6 @@ export default function Shop() {
             </div>
           </div>
 
-          {/* Staggered Hamper Card Grid */}
           <div className="shop-grid">
             {hampers.map((hamper) => {
               const activeImgIndex = cardImageIndices[hamper.id] || 0;
@@ -1028,18 +1056,14 @@ export default function Shop() {
                   onMouseEnter={() => setHoveredId(hamper.id)}
                   onMouseLeave={() => setHoveredId(null)}
                 >
-                  {/* Image Carousel wrapping */}
                   <div className="hamper-card-img-wrap">
-                    {/* Render high-end elegant placeholder for coming soon hampers (No image files) */}
                     {hamper.isComingSoon ? (
                       <div className="coming-soon-placeholder">
-                        
                         <div className="coming-soon-placeholder-title">{hamper.title}</div>
                         <div className="coming-soon-placeholder-subtitle">Unveiling Soon</div>
                       </div>
                     ) : (
                       <>
-                        {/* Left Carousel Arrow */}
                         <button
                           className="carousel-arrow carousel-arrow-left"
                           onClick={(e) => prevCardImage(e, hamper.id, hamper.images ? hamper.images.length : 0)}
@@ -1047,8 +1071,6 @@ export default function Shop() {
                         >
                           ‹
                         </button>
-
-                        {/* Right Carousel Arrow */}
                         <button
                           className="carousel-arrow carousel-arrow-right"
                           onClick={(e) => nextCardImage(e, hamper.id, hamper.images ? hamper.images.length : 0)}
@@ -1056,8 +1078,6 @@ export default function Shop() {
                         >
                           ›
                         </button>
-
-                        {/* Image Track */}
                         <div className="carousel-track">
                           {hamper.images && hamper.images.map((imgUrl, index) => (
                             <div
@@ -1072,12 +1092,8 @@ export default function Shop() {
                             </div>
                           ))}
                         </div>
-
                         <div className="hamper-card-img-overlay" />
-                        
                         <div className="hamper-tag">{hamper.tag}</div>
-                        
-                        {/* Small Dot Selectors */}
                         <div className="carousel-dots">
                           {hamper.images && hamper.images.map((_, index) => (
                             <span
@@ -1089,25 +1105,19 @@ export default function Shop() {
                         </div>
                       </>
                     )}
-
                     {hamper.isComingSoon && (
                       <div className="coming-soon-badge">Coming Soon</div>
                     )}
-                    
                     <div className="hamper-price-chip">{hamper.price}</div>
                   </div>
 
-                  {/* Description Body */}
                   <div className="hamper-card-body">
                     <h3 className="hamper-card-title">{hamper.title}</h3>
                     <p className="hamper-card-desc">{hamper.shortDescription}</p>
                     
                     <div className="hamper-card-actions">
                       {hamper.isComingSoon ? (
-                        <button
-                          className="btn-primary"
-                          disabled
-                        >
+                        <button className="btn-primary" disabled>
                           Coming Soon
                         </button>
                       ) : (
@@ -1125,7 +1135,6 @@ export default function Shop() {
                           )}
                         </a>
                       )}
-                      
                       <button
                         className="btn-secondary"
                         onClick={() => setSelectedHamper(hamper)}
@@ -1140,7 +1149,6 @@ export default function Shop() {
           </div>
         </section>
 
-        {/* Premium Detail Zoom Modal */}
         {selectedHamper && (
           <div
             className="modal-backdrop"
@@ -1153,7 +1161,6 @@ export default function Shop() {
               aria-modal="true"
               aria-label={selectedHamper.title}
             >
-              {/* Left Side Panel - Image or high-fidelity placeholder */}
               <div className="modal-img-side">
                 {selectedHamper.isComingSoon ? (
                   <div className="coming-soon-placeholder" style={{ height: "100%", minHeight: "360px" }}>
@@ -1177,7 +1184,6 @@ export default function Shop() {
                 <div className="modal-img-price">{selectedHamper.price}</div>
               </div>
 
-              {/* Content side */}
               <div className="modal-content-side">
                 <button
                   className="modal-close-btn"
@@ -1197,7 +1203,6 @@ export default function Shop() {
                 
                 <h2 className="modal-title">{selectedHamper.title}</h2>
                 
-                {/* Thumbnail carousel selector inside Modal - ONLY rendered if not coming soon */}
                 {!selectedHamper.isComingSoon && selectedHamper.images && (
                   <div className="modal-thumbnails">
                     {selectedHamper.images.map((imgUrl, idx) => (
@@ -1214,7 +1219,6 @@ export default function Shop() {
 
                 <p className="modal-desc">{selectedHamper.fullDescription}</p>
 
-                {/* Handcrafted Badges */}
                 <div className="modal-badges">
                   {features.map((f) => (
                     <span key={f} className="modal-badge">✓ {f}</span>
@@ -1223,7 +1227,6 @@ export default function Shop() {
 
                 <div className="modal-divider" />
 
-                {/* Add actions */}
                 <div className="modal-actions">
                   {selectedHamper.isComingSoon ? (
                     <button
@@ -1265,7 +1268,6 @@ export default function Shop() {
           </div>
         )}
 
-        {/* Global Redirecting Notification Toast */}
         {redirectingId !== null && (
           <div className="toast-notification">
             <span className="toast-icon">⚜</span>
