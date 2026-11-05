@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 const people = [
   { 
     name: "Aryan", 
-    phone: "8217872439", 
+    phone: "9686949769", 
     initials: "A", 
     role: "Brand & Partnerships" 
   },
